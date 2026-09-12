@@ -18,4 +18,8 @@ dependencies {
 
     implementation 'com.pedropathing:revhub:3.0.0'
     implementation 'com.pedropathing:tuning:1.0.0'
+
+    implementation 'dev.nextftc.v2:control:VERSION'
+    implementation 'dev.nextftc.v2:hardware:VERSION'
+    implementation 'dev.nextftc.v2:robot:VERSION'
 }
