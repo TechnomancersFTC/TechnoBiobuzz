@@ -1,16 +1,20 @@
 package org.firstinspires.ftc.teamcode.techno.teleops;
 
+import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
 
+import com.qualcomm.robotcore.hardware.CRServo;
 import com.qualcomm.robotcore.hardware.DcMotor;
 import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.IMU;
+import com.qualcomm.robotcore.hardware.Servo;
 
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
+@Configurable
 @TeleOp(name = "BioBuzzTeste")
 public class BioBuzzTeste extends LinearOpMode {
 
@@ -22,7 +26,11 @@ public class BioBuzzTeste extends LinearOpMode {
     private DcMotor rightFront;
     private DcMotor leftRear;
     private DcMotor rightRear;
-    private DcMotor intake;
+    private DcMotor intake, intake2, shooter;
+    private Servo fdireita, fesquerda, hood;
+    private CRServo storreta, storreta2;
+
+    double powerT;
 
     // =========================
     // IMU
@@ -43,6 +51,13 @@ public class BioBuzzTeste extends LinearOpMode {
         rightRear = hardwareMap.get(DcMotor.class, "br");
         intake = hardwareMap.get(DcMotor.class, "intake");
         imu = hardwareMap.get(IMU.class, "imu");
+        fdireita  = hardwareMap.get(Servo.class, "f1");
+        fesquerda = hardwareMap.get(Servo.class, "f2");
+        intake2 = hardwareMap.get(DcMotor.class, "intake2");
+        shooter = hardwareMap.get(DcMotor.class, "shooter");
+        storreta = hardwareMap.get(CRServo.class, "storreta");
+        storreta2 = hardwareMap.get(CRServo.class, "storreta2");
+        hood = hardwareMap.get(Servo.class, "hood");
 
 
         // =========================
@@ -51,8 +66,11 @@ public class BioBuzzTeste extends LinearOpMode {
 
         leftFront.setDirection(DcMotor.Direction.REVERSE);
         leftRear.setDirection(DcMotor.Direction.REVERSE);
+        shooter.setDirection(DcMotorSimple.Direction.REVERSE);
+        hood.setDirection(Servo.Direction.REVERSE);
 
-        intake.setDirection(DcMotorSimple.Direction.FORWARD);
+        intake2.setDirection(DcMotorSimple.Direction.FORWARD);
+        intake.setDirection(DcMotorSimple.Direction.REVERSE);
         rightFront.setDirection(DcMotor.Direction.FORWARD);
         rightRear.setDirection(DcMotor.Direction.FORWARD);
 
@@ -83,10 +101,10 @@ public class BioBuzzTeste extends LinearOpMode {
         // =========================
 
         RevHubOrientationOnRobot.LogoFacingDirection logoDirection =
-                RevHubOrientationOnRobot.LogoFacingDirection.LEFT;
+                RevHubOrientationOnRobot.LogoFacingDirection.RIGHT;
 
         RevHubOrientationOnRobot.UsbFacingDirection usbDirection =
-                RevHubOrientationOnRobot.UsbFacingDirection.BACKWARD;
+                RevHubOrientationOnRobot.UsbFacingDirection.FORWARD;
 
         RevHubOrientationOnRobot orientation =
                 new RevHubOrientationOnRobot(
@@ -113,7 +131,8 @@ public class BioBuzzTeste extends LinearOpMode {
         // =========================
 
         waitForStart();
-
+        fdireita.setPosition(0.3);
+        fesquerda.setPosition(0.3);
 
         // =========================
         // ZERA O FIELD AO INICIAR
@@ -123,10 +142,13 @@ public class BioBuzzTeste extends LinearOpMode {
 
 
         // =========================
-        // VARIÁVEL DO BOTÃO Y
+        // VARIÁVEIS DOS BOTÕES
         // =========================
 
         boolean lastY = false;
+        boolean fState = false;
+        boolean fState1 = false;
+        boolean fState2 = false;
 
 
         // =========================
@@ -150,6 +172,7 @@ public class BioBuzzTeste extends LinearOpMode {
             lastY = currentY;
 
 
+
             // =================================
             // JOYSTICKS
             // =================================
@@ -162,6 +185,9 @@ public class BioBuzzTeste extends LinearOpMode {
 
             // Rotação
             double rotation = -gamepad1.right_stick_x;
+
+            //Torreta plano B
+            powerT = gamepad2.right_stick_x;
 
 
             // =================================
@@ -179,8 +205,8 @@ public class BioBuzzTeste extends LinearOpMode {
             // FIELD ORIENTED
             // =================================
 
-            double cosA = Math.cos(-heading);
-            double sinA = Math.sin(-heading);
+            double cosA = Math.cos(heading);
+            double sinA = Math.sin(heading);
 
             double fieldX =
                     x * cosA - y * sinA;
@@ -243,18 +269,56 @@ public class BioBuzzTeste extends LinearOpMode {
             //========
             //BOTÕES
             //=======
-            while (gamepad1.rightBumperWasPressed()){
-                intake.setPower(0.7);
-            }
-            while(gamepad1.rightBumperWasReleased()){
+
+            // Intake (sem loops 'while' bloqueantes)
+            if (gamepad1.right_bumper) {
+                intake.setPower(1);
+                intake2.setPower(1);
+
+            } else if (gamepad1.a) {
+                intake.setPower(-0.5);
+                intake2.setPower(-0.5);
+            } else {
                 intake.setPower(0);
+                intake2.setPower(0);
             }
-            while (gamepad1.aWasPressed()){
-                intake.setPower(-0.7);
+
+            // Alternar servos f1 e f2 (ON/OFF com o botão X)
+            if (gamepad1.xWasPressed()) {
+                fState = !fState;
+                if (fState) {
+                    fdireita.setPosition(1); // Posição ON // direita
+                    fesquerda.setPosition(-1);//esquerda
+                } else {
+                    fdireita.setPosition(0.3); // Posição OFF
+                    fesquerda.setPosition(0.3);
+
+                }
             }
-            while (gamepad1.aWasReleased()){
-                intake.setPower(0);
+
+            storreta.setPower(powerT);
+            storreta2.setPower(powerT);
+
+            if (gamepad1.bWasPressed()) {
+                fState1 = !fState1;
+                if (fState1) {
+                    shooter.setPower(0.85);
+                } else {
+                    shooter.setPower(0);
+                }
             }
+
+            if (gamepad1.dpadUpWasPressed()) {
+                fState2 = !fState2;
+                if (fState2) {
+                    hood.setPosition(1);
+                } else {
+                    hood.setPosition(0);
+
+                }
+            }
+
+
 
 
             // =================================
@@ -290,6 +354,8 @@ public class BioBuzzTeste extends LinearOpMode {
                     "%.2f",
                     rearRightPower
             );
+            telemetry.addData("Torreta: ", powerT);
+
 
             telemetry.addLine("");
             telemetry.addLine("Y = RESET FIELD");
