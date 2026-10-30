@@ -28,9 +28,9 @@ public class ShooterTeste extends LinearOpMode {
             if (gamepad1.bWasPressed()) {
                 fState1 = !fState1;
                 if (fState1) {
-                    shooter.setPower(1);
+                    shooter.setPower(pot);
                 } else {
-                    shooter.setPower(0);
+                    shooter.setPower(pot);
                 }
             }
 
