@@ -1,6 +1,5 @@
 package org.firstinspires.ftc.teamcode.techno.teleops;
 
-import com.bylazar.configurables.annotations.Configurable;
 import com.qualcomm.hardware.rev.RevHubOrientationOnRobot;
 import com.qualcomm.robotcore.eventloop.opmode.LinearOpMode;
 import com.qualcomm.robotcore.eventloop.opmode.TeleOp;
@@ -14,7 +13,6 @@ import com.qualcomm.robotcore.hardware.Servo;
 import org.firstinspires.ftc.robotcore.external.navigation.AngleUnit;
 import org.firstinspires.ftc.robotcore.external.navigation.YawPitchRollAngles;
 
-@Configurable
 @TeleOp(name = "BioBuzzTeste")
 public class BioBuzzTeste extends LinearOpMode {
 
@@ -69,7 +67,7 @@ public class BioBuzzTeste extends LinearOpMode {
         shooter.setDirection(DcMotorSimple.Direction.REVERSE);
         hood.setDirection(Servo.Direction.REVERSE);
 
-        intake2.setDirection(DcMotorSimple.Direction.FORWARD);
+        intake2.setDirection(DcMotorSimple.Direction.REVERSE);
         intake.setDirection(DcMotorSimple.Direction.REVERSE);
         rightFront.setDirection(DcMotor.Direction.FORWARD);
         rightRear.setDirection(DcMotor.Direction.FORWARD);
@@ -302,7 +300,7 @@ public class BioBuzzTeste extends LinearOpMode {
             if (gamepad1.bWasPressed()) {
                 fState1 = !fState1;
                 if (fState1) {
-                    shooter.setPower(0.85);
+                    shooter.setPower(0.67);
                 } else {
                     shooter.setPower(0);
                 }

@@ -1,5 +1,6 @@
 package org.firstinspires.ftc.teamcode.pedro;
 
+import com.pedropathing.algorithm.ForesightConfig;
 import com.pedropathing.follower.Follower;
 import com.pedropathing.revhub.drivetrains.MecanumConfig;
 import com.pedropathing.revhub.localizers.PinpointConfig;
@@ -8,10 +9,11 @@ import com.qualcomm.robotcore.hardware.DcMotorSimple;
 import com.qualcomm.robotcore.hardware.HardwareMap;
 
 import org.firstinspires.ftc.robotcore.external.navigation.DistanceUnit;
+import org.firstinspires.ftc.teamcode.pedro.procedures.ForesightTuner;
 
 public class Constants {
     public static Follower createFollower(HardwareMap h) {
-//        return new Follower(drivetrainConfig, localizerConfig, Foresight);
+        //return new Follower(localizerConfig, drivetrainConfig, foresightConfig);
         return null;
     }
 
@@ -30,11 +32,22 @@ public class Constants {
     public static PinpointConfig localizerConfig = new PinpointConfig(c -> {
         c.name.set("pinpoint");
         c.podType.set(GoBildaPinpointDriver.GoBildaOdometryPods.goBILDA_4_BAR_POD);
-        c.xPodOffset.set(2.375998609647976);
-        c.yPodOffset.set(0.8941133003535233);
-        c.xPodDirection.set(GoBildaPinpointDriver.EncoderDirection.FORWARD);
+        c.xPodOffset.set(3.9328480517770363);
+        c.yPodOffset.set(0.6159939352921613);
+        c.xPodDirection.set(GoBildaPinpointDriver.EncoderDirection.REVERSED);
         c.yPodDirection.set(GoBildaPinpointDriver.EncoderDirection.REVERSED);
         c.globalDistanceUnit.set(DistanceUnit.INCH);
         c.offsetUnits.set(DistanceUnit.INCH);
     });
+
+    public static ForesightConfig foresightConfig = new ForesightConfig(    c -> {
+                c.headingDriveRatio.set(0.5);
+                c.brakeAtEnd.set(true);
+                c.translationalDeviationTolerance.set(2.5);
+                c.headingDeviationTolerance.set(Math.toRadians(11.25));
+                c.cosineScale.set(false);
+
+                // Other Foresight constants...
+            }
+    );
 }
